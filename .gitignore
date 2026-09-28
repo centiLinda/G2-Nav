@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ROS
+*.log
+
+# Deep Learning Weights and Models
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+
+# YOLO / Ultralytics caches and outputs
+runs/
+datasets/
+*.cache
+
+# Virtual Environments
+venv/
+env/
+
+# OS / IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# images
+*.png
+*.jpg
+*.JPG
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+*.csv
