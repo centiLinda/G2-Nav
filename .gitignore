@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.cache
 
 # ROS
 *.log
@@ -12,15 +13,6 @@ __pycache__/
 *.onnx
 *.engine
 *.ckpt
-
-# YOLO / Ultralytics caches and outputs
-runs/
-datasets/
-*.cache
-
-# Virtual Environments
-venv/
-env/
 
 # OS / IDEs
 .vscode/

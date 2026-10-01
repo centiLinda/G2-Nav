@@ -1,0 +1,41 @@
+You are an autonomous robot navigating a campus environment, currently moving forward. Your goal is safe and efficient forward navigation.
+The attached images are from your onboard camera, spaced 1 second apart (Frame 1 to Frame 3). Frame 3 is your current view.
+
+Detected objects in Frame 3 are listed below, in the format `- label_ID detection_confidence: bbox=(xmin, ymin, xmax, ymax), tracking_distance: [X.Xm], tracking_motion: [Speed and Direction]`:
+{objects_text}
+
+--- REGION IDENTIFICATION TASK ---
+Currently known non-traversable regions: {region_list}
+Current traversable region: '{traversable_region}'
+
+1. Check if any objects in the list above describe a region (e.g., grass, road, sidewalk, floor, ground) rather than a physical obstacle.
+2. Based on the images, check if the 'Current traversable region' is still valid and safe for forward navigation. If it is empty or no longer valid, pick a new traversable region from the newly identified regions.
+3. Any newly identified regions from the object list that are NOT the traversable region should be marked as new non-traversable regions.
+
+--- OBSTACLE EVALUATION TASK ---
+Identify objects from the list that may influence your navigation. Consider ALL types of objects: dynamic (e.g., pedestrians, bicycles, cars) and static (e.g., traffic signs, safety marks, obstacles).
+For each selected object, decide whether the robot should AVOID it as an obstacle, FOLLOW it as a leader, or IGNORE it.
+Additionally, verify if the provided tracking_motion matches your visual observation of the object's absolute motion relative to the ground.
+
+Rules:
+1. STRICTLY use the exact `label_ID` (e.g., `bicycle_160`) from the provided list. Do NOT invent new objects or alter the IDs.
+2. For dynamic objects, infer their relative motion (e.g., approaching, crossing, receding) by comparing their positions across Frame 1, 2, and 3.
+3. Leader Candidates: You may assign a score of -1 to follow an object IF it is moving in a similar forward direction and it is safe/beneficial to follow. Do NOT force finding a leader if none are suitable (e.g., crowds walking against you).
+4. Ignore Irrelevant Objects: If an object is irrelevant, or it belongs to a tracked human (e.g., a backpack, shoe, clothing) and it's not affecting the robot directly, it should be marked to IGNORE (score 0). Objects identified as regions in the Region Identification Task should NOT be evaluated here as obstacles.
+5. Tracking Check: Evaluate if the tracking_motion makes sense. If an object is visually static but has a high speed, or its tracked direction clearly contradicts visual evidence, flag it as tracking_valid: no. Note: average pedestrian walking speed is 1.4m/s; if a human's speed is significantly higher than this, you need to carefully examine if it's valid.
+6. Depth Check: Evaluate if the tracking_distance matches the visual scale of the object. If the object appears close but has a large tracking_distance, flag it as depth_valid: no.
+7. Keep your analysis brief to minimize computational load, but think step-by-step before assigning a score.
+
+Answer strictly in the following format:
+Before evaluating obstacles, you MUST output the following two lines exactly:
+TRAVERSABLE_REGION: <label>
+NEW_NON_TRAVERSABLE_REGIONS: [<label1>, <label2>, ...]
+
+Then, for each object that is NOT a region, provide:
+- label_ID:
+  - status: [Briefly state if static or moving. If moving, describe relative motion across frames]
+  - reasoning: [1 short sentence explaining why it is important, whether visual motion matches tracking_motion, AND whether visual scale matches tracking_distance]
+  - tracking_valid: [yes/no] (Answer 'yes' if they match. Answer 'no' if they strongly contradict)
+  - depth_valid: [yes/no] (Answer 'no' if visual scale strongly contradicts tracking_distance)
+  - score: [-1~5] (-1=follow as leader, 0=ignore, 1~5=avoid as obstacle where 1=least important, 5=safety-critical)
+(leave a blank line between each object)

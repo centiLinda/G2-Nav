@@ -1,0 +1,34 @@
+<launch>
+    <!-- 1. Fix the TF Tree -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_body_broadcaster" args="0 0 0 0 0 0 body base_link" />
+
+    <!-- 2. RViz -->
+    <node name="rviz" pkg="rviz" type="rviz" required="true" />
+
+    <!-- 3. Detection -->
+    <node pkg="g2nav" type="detection.py" name="detection_node" output="screen" />
+
+    <!-- 4. Tracking -->
+    <node pkg="g2nav" type="tracking.py" name="tracking_node" output="screen" />
+
+    <!-- 5. Costmap -->
+    <node pkg="g2nav" type="costmap.py" name="costmap_node" output="screen" />
+
+    <!-- 6. Planning -->
+    <node pkg="g2nav" type="planning.py" name="planning_node" output="screen" />
+
+    <!-- 7. VLM -->
+    <node pkg="g2nav" type="vlm_local.py" name="vlm_node" output="screen">
+        <param name="api_key" value="$(optenv OPENAI_API_KEY EMPTY)" />
+    </node>
+
+    <!-- 8. Dashboard -->
+    <node pkg="g2nav" type="dashboard.py" name="dashboard_node" output="screen" />
+
+    <!-- 9. Trajectory Tracking -->
+    <node pkg="g2nav" type="traj_tracking.py" name="traj_tracking_node" output="screen" />
+
+    <!-- 10. Set Goal -->
+    <node pkg="g2nav" type="set_goal.py" name="set_goal_node" output="screen" />
+
+</launch>
